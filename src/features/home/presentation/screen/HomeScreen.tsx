@@ -5,6 +5,9 @@ import { AuroraBackground } from '@/features/home/presentation/components/aurora
 import Navbar from '@/features/home/presentation/components/Navbar'
 import HeroSection from '@/features/home/presentation/components/HeroSection'
 import TableShowcaseSection from '@/features/home/presentation/components/TableShowcaseSection'
+import FeaturesSection from '@/features/home/presentation/components/FeaturesSection'
+import VideoShowcaseSection from '@/features/home/presentation/components/VideoShowcaseSection'
+import Footer from '@/features/home/presentation/components/Footer'
 
 const HomeScreen = () => {
     return (
@@ -13,7 +16,10 @@ const HomeScreen = () => {
                 <Navbar />
                 <HeroSection />
             </AuroraBackground>
+            <FeaturesSection />
             <TableShowcaseSection />
+            <VideoShowcaseSection />
+            <Footer />
         </>
     )
 }

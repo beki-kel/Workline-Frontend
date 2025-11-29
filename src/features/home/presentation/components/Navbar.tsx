@@ -11,13 +11,15 @@ const Navbar = () => {
                 <div className="flex items-center justify-between px-12 py-4">
                     {/* Logo and Name */}
                     <div className="flex items-center gap-3">
-                        <Image
-                            src="https://res.cloudinary.com/dr2h8zmll/image/upload/v1764316308/logo-workline_xievif.svg"
-                            alt="Workline Logo"
-                            width={40}
-                            height={40}
-                            className="h-10 w-10"
-                        />
+                        <div className="bg-white/90 dark:bg-white/95 rounded-xl p-2 shadow-sm">
+                            <Image
+                                src="https://res.cloudinary.com/dr2h8zmll/image/upload/v1764316308/logo-workline_xievif.svg"
+                                alt="Workline Logo"
+                                width={32}
+                                height={32}
+                                className="h-8 w-8"
+                            />
+                        </div>
                         <span className="text-xl font-bold text-foreground">Workline</span>
                     </div>
 
@@ -26,13 +28,13 @@ const Navbar = () => {
                         <Button
                             variant="ghost"
                             size="lg"
-                            className="hover:bg-white/20 hover:scale-105 transition-all duration-200 rounded-full py-3 px-6 text-base"
+                            className="hover:bg-white/20 dark:hover:bg-white/10 hover:scale-105 transition-all duration-200 rounded-full py-3 px-6 text-base text-foreground"
                         >
                             Sign Up
                         </Button>
                         <Button
                             size="lg"
-                            className="bg-primary/90 hover:bg-primary hover:scale-105 shadow-md hover:shadow-lg transition-all duration-200 rounded-full py-6 px-6 text-base"
+                            className="bg-foreground/90 hover:bg-foreground text-background hover:scale-105 shadow-md hover:shadow-lg transition-all duration-200 rounded-full py-6 px-6 text-base"
                         >
                             Login
                         </Button>

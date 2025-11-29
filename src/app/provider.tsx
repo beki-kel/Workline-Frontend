@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { Provider } from 'react-redux'
 import { makeStore, AppStore } from '@/lib/store'
+import { ThemeProvider } from 'next-themes'
 
 export default function AppProvider({
     children,
@@ -24,7 +25,9 @@ export default function AppProvider({
     return (
         <Provider store={storeRef.current}>
             <QueryClientProvider client={queryClientRef.current}>
-                {children}
+                <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+                    {children}
+                </ThemeProvider>
             </QueryClientProvider>
         </Provider>
     )

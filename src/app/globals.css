@@ -41,6 +41,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --animate-aurora: aurora 60s linear infinite;
+  --animate-border-spin: border-spin 3s linear forwards;
 
   @keyframes aurora {
     from {
@@ -53,6 +54,16 @@
       background-position:
         350% 50%,
         350% 50%;
+    }
+  }
+
+  @keyframes border-spin {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 200% 50%;
     }
   }
 }
@@ -162,12 +173,31 @@
 
 @layer utilities {
   .glassmorphic {
-    @apply bg-white/20 backdrop-blur-3xl backdrop-saturate-200 border border-white/40;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
   }
 
   .dark .glassmorphic {
-    @apply bg-white/10 border-white/20;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.03));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .animate-border-spin {
+    background-size: 200% 200%;
+    animation: var(--animate-border-spin);
   }
 }
