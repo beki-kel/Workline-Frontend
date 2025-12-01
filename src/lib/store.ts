@@ -1,10 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, useSelector, useStore } from 'react-redux'
 import type { TypedUseSelectorHook } from 'react-redux'
+import organizationsReducer from './features/organizations/organizationsSlice'
 
 export const makeStore = () => {
     return configureStore({
-        reducer: {},
+        reducer: {
+            organizations: organizationsReducer,
+        },
     })
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AppProvider from "./provider";
-import DarkModeToggle from "@/features/home/presentation/components/DarkModeToggle";
+import DarkModeToggle from "@/features/LandingPage/presentation/components/DarkModeToggle";
 
 const inter = Inter({
   variable: "--font-inter",

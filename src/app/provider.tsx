@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import { Provider } from 'react-redux'
 import { makeStore, AppStore } from '@/lib/store'
 import { ThemeProvider } from 'next-themes'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 export default function AppProvider({
     children,
@@ -25,6 +26,7 @@ export default function AppProvider({
     return (
         <Provider store={storeRef.current}>
             <QueryClientProvider client={queryClientRef.current}>
+                <ReactQueryDevtools initialIsOpen={false} />
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
                     {children}
                 </ThemeProvider>
