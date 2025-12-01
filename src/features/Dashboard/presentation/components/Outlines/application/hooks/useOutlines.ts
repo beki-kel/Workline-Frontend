@@ -1,11 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { OutlineRepositoryImpl } from '../../data/repositories/OutlineRepositoryImpl'
 import { GetOutlinesUseCase } from '../usecases/GetOutlinesUseCase'
+import { UpdateOutlineUseCase } from '../usecases/UpdateOutlineUseCase'
+import { Outline } from '../../domain/entities/Outline'
+import { toast } from 'sonner'
 
 const outlineRepository = new OutlineRepositoryImpl()
 const getOutlinesUseCase = new GetOutlinesUseCase(outlineRepository)
+const updateOutlineUseCase = new UpdateOutlineUseCase(outlineRepository)
 
 export const useOutlines = (organizationId?: string) => {
+    const queryClient = useQueryClient()
+
     const outlinesQuery = useQuery({
         queryKey: ['outlines', organizationId],
         queryFn: () => getOutlinesUseCase.execute(organizationId!),
@@ -14,9 +20,25 @@ export const useOutlines = (organizationId?: string) => {
         refetchOnWindowFocus: false,
     })
 
+    const updateOutlineMutation = useMutation({
+        mutationFn: (outline: Outline) => {
+            if (!organizationId) throw new Error("Organization ID is required")
+            return updateOutlineUseCase.execute(organizationId, outline)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['outlines', organizationId] })
+            toast.success("Outline updated successfully")
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to update outline")
+        }
+    })
+
     return {
         outlines: outlinesQuery.data || [],
         isLoading: outlinesQuery.isLoading,
         error: outlinesQuery.error,
+        updateOutline: updateOutlineMutation.mutateAsync,
+        isUpdating: updateOutlineMutation.isPending
     }
 }

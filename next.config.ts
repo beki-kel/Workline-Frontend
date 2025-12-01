@@ -28,8 +28,24 @@ const nextConfig: NextConfig = {
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/outlines`,
       },
       {
+        source: '/api/organizations/:organizationId/members/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/members/:path*`,
+      },
+      {
         source: '/api/organizations/:organizationId/members',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/members`,
+      },
+      {
+        source: '/api/organizations/:organizationId/invitations',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/invitations`,
+      },
+      {
+        source: '/api/invitations/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/invitations/:path*`,
+      },
+      {
+        source: '/api/auth/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/:path*`,
       },
     ];
   },

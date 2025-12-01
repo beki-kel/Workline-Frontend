@@ -5,7 +5,7 @@ import { CreateOrganizationUseCase } from '../usecases/CreateOrganizationUseCase
 import { SetActiveOrganizationUseCase } from '../usecases/SetActiveOrganizationUseCase'
 import { authClient } from '@/lib/auth-client'
 import { useAppDispatch, useAppSelector } from '@/lib/store'
-import { setActiveOrganization as setActiveOrgRedux } from '@/lib/features/organizations/organizationsSlice'
+import { setActiveOrganization as setActiveOrgRedux, setCurrentUserRole } from '@/lib/features/organizations/organizationsSlice'
 import { useEffect } from 'react'
 
 // Initialize repository and use cases
@@ -17,13 +17,15 @@ const setActiveOrganizationUseCase = new SetActiveOrganizationUseCase(organizati
 export const useOrganization = () => {
     const queryClient = useQueryClient()
     const { data: session } = authClient.useSession()
+
     const dispatch = useAppDispatch()
     const activeOrganizationId = useAppSelector((state) => state.organizations.activeOrganizationId)
+    const currentUserRole = useAppSelector((state) => state.organizations.currentUserRole)
 
     const organizationsQuery = useQuery({
         queryKey: ['organizations'],
         queryFn: () => getOrganizationsUseCase.execute(),
-        enabled: !!session,
+        enabled: !!session?.user,
     })
 
     const createOrganizationMutation = useMutation({
@@ -34,6 +36,7 @@ export const useOrganization = () => {
             // Auto-switch to the newly created organization
             if (newOrg?.id) {
                 dispatch(setActiveOrgRedux(newOrg.id))
+                await authClient.organization.setActive({ organizationId: newOrg.id })
             }
         },
     })
@@ -42,19 +45,45 @@ export const useOrganization = () => {
         mutationFn: (organizationId: string) =>
             setActiveOrganizationUseCase.execute(organizationId),
         onSuccess: async (_, organizationId) => {
+            // Optimistic update
+            dispatch(setActiveOrgRedux(organizationId))
+
             await queryClient.invalidateQueries({ queryKey: ['session'] })
             await queryClient.invalidateQueries({ queryKey: ['organizations'] })
-            dispatch(setActiveOrgRedux(organizationId))
-            authClient.getSession()
+
+            // Refresh session to ensure backend state is synced
+            await authClient.getSession()
+
+            // Navigate to dashboard outlines
+            window.location.href = '/dashboard'
         },
     })
 
-    // Sync Redux with session on mount
+    // Sync Redux with session and fetch role from Better Auth
     useEffect(() => {
+        // Set active org ID from session if not in Redux
         if (session?.session?.activeOrganizationId && !activeOrganizationId) {
             dispatch(setActiveOrgRedux(session.session.activeOrganizationId))
         }
-    }, [session?.session?.activeOrganizationId, activeOrganizationId, dispatch])
+
+        // Fetch role from Better Auth's dedicated endpoint
+        // We depend on the session's activeOrganizationId being correct
+        const fetchRole = async () => {
+            if (session?.session?.activeOrganizationId) {
+                try {
+                    const { data } = await authClient.organization.getActiveMemberRole()
+
+                    if (data?.role && currentUserRole !== data.role) {
+                        dispatch(setCurrentUserRole(data.role))
+                    }
+                } catch (error) {
+                    console.error('❌ Error fetching role:', error)
+                }
+            }
+        }
+
+        fetchRole()
+    }, [session, activeOrganizationId, currentUserRole, dispatch])
 
     // Auto-select first organization if user has orgs but no active org
     useEffect(() => {
@@ -65,17 +94,10 @@ export const useOrganization = () => {
                 setActiveOrganizationMutation.mutate(firstOrg.id)
             }
         }
-    }, [organizationsQuery.data, activeOrganizationId, organizationsQuery.isLoading, setActiveOrganizationMutation])
+    }, [organizationsQuery.data, activeOrganizationId, organizationsQuery.isLoading])
 
-    // Derived active organization ID: prefer Redux state, fallback to first org
-    const derivedActiveOrganizationId = activeOrganizationId || (organizationsQuery.data?.[0]?.id ?? null)
-
-    // Sync Redux with derived state if needed
-    useEffect(() => {
-        if (!activeOrganizationId && derivedActiveOrganizationId) {
-            dispatch(setActiveOrgRedux(derivedActiveOrganizationId))
-        }
-    }, [activeOrganizationId, derivedActiveOrganizationId, dispatch])
+    // Derived active organization
+    const activeOrganization = organizationsQuery.data?.find(org => org.id === activeOrganizationId) || null
 
     return {
         organizations: organizationsQuery.data || [],
@@ -83,6 +105,9 @@ export const useOrganization = () => {
         error: organizationsQuery.error,
         createOrganization: createOrganizationMutation.mutateAsync,
         setActiveOrganization: setActiveOrganizationMutation.mutateAsync,
-        activeOrganizationId: derivedActiveOrganizationId,
+        isSwitchingOrganization: setActiveOrganizationMutation.isPending,
+        activeOrganizationId: activeOrganizationId || null,
+        activeOrganization,
+        currentUserRole, // From Redux
     }
 }

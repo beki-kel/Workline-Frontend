@@ -2,24 +2,27 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface OrganizationsState {
     activeOrganizationId: string | null
+    currentUserRole: string | null
 }
 
 const initialState: OrganizationsState = {
     activeOrganizationId: null,
+    currentUserRole: null,
 }
 
 export const organizationsSlice = createSlice({
     name: 'organizations',
     initialState,
     reducers: {
-        setActiveOrganization: (state, action: PayloadAction<string>) => {
+        setActiveOrganization: (state, action: PayloadAction<string | null>) => {
             state.activeOrganizationId = action.payload
         },
-        clearActiveOrganization: (state) => {
-            state.activeOrganizationId = null
+        setCurrentUserRole: (state, action: PayloadAction<string | null>) => {
+            state.currentUserRole = action.payload
         },
     },
 })
 
-export const { setActiveOrganization, clearActiveOrganization } = organizationsSlice.actions
+export const { setActiveOrganization, setCurrentUserRole } = organizationsSlice.actions
+
 export default organizationsSlice.reducer

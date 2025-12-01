@@ -12,4 +12,9 @@ export class OutlineRepositoryImpl implements IOutlineRepository {
         const data = await apiClient.post(`/api/organizations/${organizationId}/outlines`, outline)
         return data as Outline
     }
+
+    async updateOutline(organizationId: string, outline: Outline): Promise<Outline> {
+        const data = await apiClient.patch(`/api/organizations/${organizationId}/outlines/${outline.id}`, outline)
+        return data as Outline
+    }
 }

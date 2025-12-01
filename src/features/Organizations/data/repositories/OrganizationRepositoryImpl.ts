@@ -7,7 +7,10 @@ import { IOrganizationRepository } from '../../domain/repositories/IOrganization
 export class OrganizationRepositoryImpl implements IOrganizationRepository {
     async listOrganizations(): Promise<Organization[]> {
         const { data, error } = await authClient.organization.list()
+
         if (error) throw error
+        if (!data) return []
+
         return data as Organization[]
     }
 

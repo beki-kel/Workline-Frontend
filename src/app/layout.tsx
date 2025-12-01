@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AppProvider from "./provider";
 import DarkModeToggle from "@/features/LandingPage/presentation/components/DarkModeToggle";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <AppProvider>
           {children}
           <DarkModeToggle />
+          <Toaster richColors position="top-right" />
         </AppProvider>
       </body>
     </html>

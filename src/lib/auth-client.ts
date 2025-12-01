@@ -7,6 +7,10 @@ export const authClient = createAuthClient({
         organizationClient()
     ],
     fetchOptions: {
-        credentials: 'include', // Important for cookies
+        credentials: 'include',
     }
 })
+
+// Log to verify configuration
+console.log('🔐 Auth Client configured with baseURL:', process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000")
+

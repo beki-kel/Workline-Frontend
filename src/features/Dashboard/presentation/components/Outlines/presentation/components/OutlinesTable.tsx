@@ -67,9 +67,10 @@ import { CreateOutlineDialog } from "./CreateOutlineDialog"
 interface OutlinesTableProps {
     outlines: Outline[]
     isLoading: boolean
+    onRowClick?: (outline: Outline) => void
 }
 
-export function OutlinesTable({ outlines, isLoading }: OutlinesTableProps) {
+export function OutlinesTable({ outlines, isLoading, onRowClick }: OutlinesTableProps) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -301,7 +302,12 @@ export function OutlinesTable({ outlines, isLoading }: OutlinesTableProps) {
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map((row) => (
-                                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                        className="cursor-pointer hover:bg-muted/50"
+                                        onClick={() => onRowClick?.(row.original)}
+                                    >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id}>
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

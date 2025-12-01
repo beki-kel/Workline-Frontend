@@ -25,7 +25,7 @@ const DarkModeToggle = () => {
             transition={{ delay: 1, duration: 0.3 }}
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
             className={`
-                fixed bottom-24 right-8 z-50
+                fixed bottom-14 right-8 z-50
                 w-14 h-14 rounded-full
                 flex items-center justify-center
                 transition-all duration-300

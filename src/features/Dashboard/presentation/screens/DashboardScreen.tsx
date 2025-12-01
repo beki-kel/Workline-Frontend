@@ -1,11 +1,6 @@
 'use client'
 
-import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import {
-    SidebarInset,
-    SidebarProvider,
-} from "@/components/ui/sidebar"
 import { useOrganization } from "@/features/Organizations/application/hooks/useOrganization"
 import { useOutlines } from "@/features/Dashboard/presentation/components/Outlines/application/hooks/useOutlines"
 import { OutlinesTable } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/OutlinesTable"
@@ -13,13 +8,21 @@ import { EmptyOrgState } from "@/features/Organizations/presentation/components/
 import { Skeleton } from "@/components/ui/skeleton"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { SectionCards } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/SectionCards"
+import { ChartAreaInteractive } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/ChartAreaInteractive"
+import { EditOutlineSidebar } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/EditOutlineSidebar"
+import { Outline } from "@/features/Dashboard/presentation/components/Outlines/domain/entities/Outline"
+import { SidebarInset } from "@/components/ui/sidebar"
 
 export function DashboardScreen() {
     const router = useRouter()
     const { data: session } = authClient.useSession()
     const { activeOrganizationId, isLoading: isOrgLoading } = useOrganization()
-    const { outlines, isLoading: isOutlinesLoading } = useOutlines(activeOrganizationId || undefined)
+    const { outlines, isLoading: isOutlinesLoading, updateOutline } = useOutlines(activeOrganizationId || undefined)
+
+    const [selectedOutline, setSelectedOutline] = useState<Outline | null>(null)
+    const [isEditSidebarOpen, setIsEditSidebarOpen] = useState(false)
 
     // Redirect to verify-email if user's email is not verified
     useEffect(() => {
@@ -28,31 +31,43 @@ export function DashboardScreen() {
         }
     }, [session, router])
 
+    const handleRowClick = (outline: Outline) => {
+        setSelectedOutline(outline)
+        setIsEditSidebarOpen(true)
+    }
+
+    const handleUpdateOutline = async (updatedOutline: Outline) => {
+        if (activeOrganizationId) {
+            await updateOutline(updatedOutline)
+        }
+    }
+
     return (
-        <SidebarProvider
-            style={
-                {
-                    "--sidebar-width": "calc(var(--spacing) * 72)",
-                    "--header-height": "calc(var(--spacing) * 12)",
-                } as React.CSSProperties
-            }
-        >
-            <AppSidebar variant="inset" />
-            <SidebarInset>
-                <SiteHeader title="Outlines" />
-                <div className="flex flex-1 flex-col p-4 md:p-6">
-                    {isOrgLoading ? (
-                        <div className="space-y-4">
-                            <Skeleton className="h-10 w-64" />
-                            <Skeleton className="h-96 w-full" />
-                        </div>
-                    ) : !activeOrganizationId ? (
-                        <EmptyOrgState />
-                    ) : (
-                        <OutlinesTable outlines={outlines} isLoading={isOutlinesLoading} />
-                    )}
-                </div>
-            </SidebarInset>
-        </SidebarProvider>
+        <SidebarInset>
+            <SiteHeader title="Outlines" />
+            <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+                {isOrgLoading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-64" />
+                        <Skeleton className="h-96 w-full" />
+                    </div>
+                ) : !activeOrganizationId ? (
+                    <EmptyOrgState />
+                ) : (
+                    <OutlinesTable
+                        outlines={outlines}
+                        isLoading={isOutlinesLoading}
+                        onRowClick={handleRowClick}
+                    />
+                )}
+            </div>
+
+            <EditOutlineSidebar
+                outline={selectedOutline}
+                isOpen={isEditSidebarOpen}
+                onClose={() => setIsEditSidebarOpen(false)}
+                onUpdate={handleUpdateOutline}
+            />
+        </SidebarInset>
     )
 }
