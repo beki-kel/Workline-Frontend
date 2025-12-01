@@ -1,13 +1,81 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { GridBackground } from '../components/GridBackground'
 import Image from 'next/image'
-import { Mail } from 'lucide-react'
+import { Mail, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { authClient } from '@/lib/auth-client'
+import { useToast } from '@/features/Core/application/hooks/useToast'
+import { ToastContainer } from '@/features/Core/shared/components/ToastContainer'
+
+function ResendButton({ email }: { email: string }) {
+    const [countdown, setCountdown] = React.useState(120) // Start with 2 minutes
+    const [isResending, setIsResending] = React.useState(false)
+    const { success, error, toasts, removeToast } = useToast()
+
+    React.useEffect(() => {
+        if (countdown > 0) {
+            const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
+            return () => clearTimeout(timer)
+        }
+    }, [countdown])
+
+    const handleResend = async () => {
+        setIsResending(true)
+        try {
+            await authClient.sendVerificationEmail({
+                email,
+                callbackURL: `${window.location.origin}/dashboard`
+            })
+            setCountdown(120) // 2 minutes
+            success('Verification email sent! Check your inbox.')
+        } catch (err: any) {
+            error(err.message || 'Failed to resend verification email.')
+        } finally {
+            setIsResending(false)
+        }
+    }
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60)
+        const secs = seconds % 60
+        return `${mins}:${secs.toString().padStart(2, '0')}`
+    }
+
+    return (
+        <>
+            <Button
+                variant="ghost"
+                className="w-full"
+                onClick={handleResend}
+                disabled={countdown > 0 || isResending}
+            >
+                {isResending ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Resending...
+                    </>
+                ) : countdown > 0 ? (
+                    `Resend in ${formatTime(countdown)}`
+                ) : (
+                    'Resend Verification Email'
+                )}
+            </Button>
+            <ToastContainer toasts={toasts} onClose={removeToast} />
+        </>
+    )
+}
 
 const VerifyEmailScreen = () => {
+    const [email] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return sessionStorage.getItem('signup_email') || ''
+        }
+        return ''
+    })
+
     return (
         <GridBackground>
             <div className="absolute inset-0 z-0 bg-white/50 dark:bg-transparent" />
@@ -38,7 +106,8 @@ const VerifyEmailScreen = () => {
                                 We've sent a verification link to your email address. Please click the link to verify your account.
                             </p>
                         </div>
-                        <div className="w-full pt-4">
+                        <div className="w-full pt-4 space-y-2">
+                            {email && <ResendButton email={email} />}
                             <Link href="/auth">
                                 <Button variant="outline" className="w-full">
                                     Back to Login

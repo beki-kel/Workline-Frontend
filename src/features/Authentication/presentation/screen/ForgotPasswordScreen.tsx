@@ -13,6 +13,55 @@ import { authClient } from '@/lib/auth-client'
 import { useToast } from '@/features/Core/application/hooks/useToast'
 import { ToastContainer } from '@/features/Core/shared/components/ToastContainer'
 
+
+function ResendButton({ onResend, initialCountdown = false }: { onResend: () => Promise<void> | void, initialCountdown?: boolean }) {
+    const [countdown, setCountdown] = React.useState(initialCountdown ? 120 : 0)
+    const [isResending, setIsResending] = React.useState(false)
+
+    React.useEffect(() => {
+        if (countdown > 0) {
+            const timer = setTimeout(() => setCountdown(countdown - 1), 1000)
+            return () => clearTimeout(timer)
+        }
+    }, [countdown])
+
+    const handleResend = async () => {
+        setIsResending(true)
+        try {
+            await onResend()
+            setCountdown(120) // 2 minutes
+        } finally {
+            setIsResending(false)
+        }
+    }
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60)
+        const secs = seconds % 60
+        return `${mins}:${secs.toString().padStart(2, '0')}`
+    }
+
+    return (
+        <Button
+            variant="ghost"
+            className="w-full"
+            onClick={handleResend}
+            disabled={countdown > 0 || isResending}
+        >
+            {isResending ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Resending...
+                </>
+            ) : countdown > 0 ? (
+                `Resend in ${formatTime(countdown)}`
+            ) : (
+                'Resend Reset Link'
+            )}
+        </Button>
+    )
+}
+
 const ForgotPasswordScreen = () => {
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -24,7 +73,7 @@ const ForgotPasswordScreen = () => {
         setIsLoading(true)
 
         try {
-            await authClient.forgetPassword({
+            await authClient.requestPasswordReset({
                 email,
                 redirectTo: `${window.location.origin}/reset-password`,
             })
@@ -66,8 +115,9 @@ const ForgotPasswordScreen = () => {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
+                                <ResendButton onResend={() => handleSubmit({ preventDefault: () => { } } as React.FormEvent)} initialCountdown={true} />
                                 <Link href="/auth">
-                                    <Button variant="outline" className="w-full">
+                                    <Button variant="outline" className="w-full mt-2">
                                         <ArrowLeft className="mr-2 h-4 w-4" />
                                         Back to Login
                                     </Button>

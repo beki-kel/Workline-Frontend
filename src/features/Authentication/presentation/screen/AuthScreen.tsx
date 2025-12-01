@@ -38,6 +38,10 @@ const AuthScreen = () => {
             const session = await signup(values)
             console.log('Signup successful', session)
             success('Account created! Please check your email to verify your account.')
+            // Store email for resend functionality
+            if (typeof window !== 'undefined') {
+                sessionStorage.setItem('signup_email', values.email)
+            }
             setTimeout(() => {
                 router.push('/verify-email')
             }, 1500)
