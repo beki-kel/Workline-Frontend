@@ -4,6 +4,8 @@ import "./globals.css";
 import AppProvider from "./provider";
 import DarkModeToggle from "@/features/LandingPage/presentation/components/DarkModeToggle";
 import { Toaster } from "@/components/ui/sonner";
+import { GlobalLoaderProvider } from "@/context/GlobalLoaderContext";
+import { GlobalLoader } from "@/components/GlobalLoader";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,9 +35,12 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans`}
       >
         <AppProvider>
-          {children}
-          <DarkModeToggle />
-          <Toaster richColors position="top-right" />
+          <GlobalLoaderProvider>
+            <GlobalLoader />
+            {children}
+            <DarkModeToggle />
+            <Toaster richColors position="top-right" />
+          </GlobalLoaderProvider>
         </AppProvider>
       </body>
     </html>

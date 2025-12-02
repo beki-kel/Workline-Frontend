@@ -60,17 +60,27 @@ import {
     ChevronsRight,
     Columns3,
     ChevronDown,
-    Eye
+    Eye,
+    Loader2
 } from "lucide-react"
 import { CreateOutlineDialog } from "./CreateOutlineDialog"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 
 interface OutlinesTableProps {
     outlines: Outline[]
     isLoading: boolean
     onRowClick?: (outline: Outline) => void
+    onDelete?: (outlineId: string) => Promise<void>
 }
 
-export function OutlinesTable({ outlines, isLoading, onRowClick }: OutlinesTableProps) {
+export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: OutlinesTableProps) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -80,6 +90,20 @@ export function OutlinesTable({ outlines, isLoading, onRowClick }: OutlinesTable
         pageSize: 10,
     })
     const [showCreateDialog, setShowCreateDialog] = React.useState(false)
+    const [outlineToDelete, setOutlineToDelete] = React.useState<string | null>(null)
+    const [isDeleting, setIsDeleting] = React.useState(false)
+
+    const handleDelete = async () => {
+        if (outlineToDelete && onDelete) {
+            setIsDeleting(true)
+            try {
+                await onDelete(outlineToDelete)
+                setOutlineToDelete(null)
+            } finally {
+                setIsDeleting(false)
+            }
+        }
+    }
 
     const columns: ColumnDef<Outline>[] = [
         {
@@ -194,16 +218,18 @@ export function OutlinesTable({ outlines, isLoading, onRowClick }: OutlinesTable
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-32">
-                        <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onRowClick?.(row.original)}>
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                setOutlineToDelete(row.original.id)
+                            }}
+                        >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                         </DropdownMenuItem>
@@ -397,6 +423,24 @@ export function OutlinesTable({ outlines, isLoading, onRowClick }: OutlinesTable
                 </div>
             </TabsContent>
             <CreateOutlineDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
+
+            <Dialog open={!!outlineToDelete} onOpenChange={(open) => !open && setOutlineToDelete(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Are you sure?</DialogTitle>
+                        <DialogDescription>
+                            This action cannot be undone. This will permanently delete the outline.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setOutlineToDelete(null)} disabled={isDeleting}>Cancel</Button>
+                        <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </Tabs>
     )
 }

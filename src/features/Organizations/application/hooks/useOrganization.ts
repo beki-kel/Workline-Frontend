@@ -7,6 +7,7 @@ import { authClient } from '@/lib/auth-client'
 import { useAppDispatch, useAppSelector } from '@/lib/store'
 import { setActiveOrganization as setActiveOrgRedux, setCurrentUserRole } from '@/lib/features/organizations/organizationsSlice'
 import { useEffect } from 'react'
+import { useGlobalLoader } from '@/context/GlobalLoaderContext'
 
 // Initialize repository and use cases
 const organizationRepository = new OrganizationRepositoryImpl()
@@ -41,9 +42,13 @@ export const useOrganization = () => {
         },
     })
 
+    const { showLoader, hideLoader } = useGlobalLoader()
+
     const setActiveOrganizationMutation = useMutation({
-        mutationFn: (organizationId: string) =>
-            setActiveOrganizationUseCase.execute(organizationId),
+        mutationFn: async (organizationId: string) => {
+            showLoader()
+            return setActiveOrganizationUseCase.execute(organizationId)
+        },
         onSuccess: async (_, organizationId) => {
             // Optimistic update
             dispatch(setActiveOrgRedux(organizationId))
@@ -56,7 +61,12 @@ export const useOrganization = () => {
 
             // Navigate to dashboard outlines
             window.location.href = '/dashboard'
+            // Loader will be hidden when page reloads or we can hide it if we used router.push
+            // hideLoader() 
         },
+        onError: () => {
+            hideLoader()
+        }
     })
 
     // Sync Redux with session and fetch role from Better Auth

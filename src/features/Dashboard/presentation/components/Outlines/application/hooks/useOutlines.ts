@@ -5,9 +5,12 @@ import { UpdateOutlineUseCase } from '../usecases/UpdateOutlineUseCase'
 import { Outline } from '../../domain/entities/Outline'
 import { toast } from 'sonner'
 
+import { DeleteOutlineUseCase } from '../usecases/DeleteOutlineUseCase'
+
 const outlineRepository = new OutlineRepositoryImpl()
 const getOutlinesUseCase = new GetOutlinesUseCase(outlineRepository)
 const updateOutlineUseCase = new UpdateOutlineUseCase(outlineRepository)
+const deleteOutlineUseCase = new DeleteOutlineUseCase(outlineRepository)
 
 export const useOutlines = (organizationId?: string) => {
     const queryClient = useQueryClient()
@@ -34,11 +37,27 @@ export const useOutlines = (organizationId?: string) => {
         }
     })
 
+    const deleteOutlineMutation = useMutation({
+        mutationFn: (outlineId: string) => {
+            if (!organizationId) throw new Error("Organization ID is required")
+            return deleteOutlineUseCase.execute(organizationId, outlineId)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['outlines', organizationId] })
+            toast.success("Outline deleted successfully")
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to delete outline")
+        }
+    })
+
     return {
         outlines: outlinesQuery.data || [],
         isLoading: outlinesQuery.isLoading,
         error: outlinesQuery.error,
         updateOutline: updateOutlineMutation.mutateAsync,
-        isUpdating: updateOutlineMutation.isPending
+        isUpdating: updateOutlineMutation.isPending,
+        deleteOutline: deleteOutlineMutation.mutateAsync,
+        isDeleting: deleteOutlineMutation.isPending
     }
 }

@@ -36,15 +36,12 @@ export class InvitationsRepositoryImpl implements IInvitationRepository {
         console.log('🔔 Fetching sent invitations for organization:', organizationId);
 
         try {
-            const response = await fetch('/api/auth/invitation/list', {
-                method: 'POST',
+            const response = await fetch(`/api/auth/organization/list-invitations?organizationId=${organizationId}`, {
+                method: 'GET',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    organizationId
-                })
             });
 
             console.log('📡 Response status:', response.status, response.statusText);

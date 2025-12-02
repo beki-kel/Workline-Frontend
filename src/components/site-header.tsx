@@ -17,17 +17,17 @@ export function SiteHeader(
             owner: {
                 label: "Owner",
                 icon: Crown,
-                className: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20"
+                className: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 py-2 px-4"
             },
             admin: {
                 label: "Admin",
                 icon: Shield,
-                className: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20"
+                className: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20 py-2 px-4"
             },
             member: {
                 label: "Member",
                 icon: User,
-                className: "bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20"
+                className: "bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20 py-2 px-4"
             }
         }
 
@@ -46,7 +46,7 @@ export function SiteHeader(
 
     return (
         <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-            <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+            <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6 py-4">
                 <SidebarTrigger className="-ml-1" />
                 <Separator
                     orientation="vertical"

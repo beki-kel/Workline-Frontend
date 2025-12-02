@@ -26,6 +26,8 @@ import {
 import { useOrganization } from "@/features/Organizations/application/hooks/useOrganization"
 import { PermissionChecks } from "@/lib/permissions"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useGlobalLoader } from "@/context/GlobalLoaderContext"
 
 // This is sample data.
 const data = {
@@ -38,10 +40,22 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { currentUserRole } = useOrganization()
+  const pathname = usePathname()
+  const { showLoader, hideLoader } = useGlobalLoader()
 
   // Check permissions
   const canAccessMembers = PermissionChecks.canAccessMembers(currentUserRole)
   const canManageInvitations = PermissionChecks.canManageInvitations(currentUserRole)
+
+  const handleNavigation = (path: string) => {
+    if (pathname !== path) {
+      showLoader()
+      // Hide loader after a short delay to allow transition
+      setTimeout(() => {
+        hideLoader()
+      }, 1000)
+    }
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -54,7 +68,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/dashboard"}
+                  className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                  onClick={() => handleNavigation("/dashboard")}
+                >
                   <Link href="/dashboard">
                     <LayoutDashboard className="h-4 w-4" />
                     <span>Outlines</span>
@@ -64,7 +83,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
               {canAccessMembers && (
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === "/dashboard/members"}
+                    className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                    onClick={() => handleNavigation("/dashboard/members")}
+                  >
                     <Link href="/dashboard/members">
                       <Users className="h-4 w-4" />
                       <span>Members</span>
@@ -74,7 +98,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               )}
 
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/dashboard/invitations"}
+                  className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                  onClick={() => handleNavigation("/dashboard/invitations")}
+                >
                   <Link href="/dashboard/invitations">
                     <MailIcon className="h-4 w-4" />
                     <span>Invitations</span>

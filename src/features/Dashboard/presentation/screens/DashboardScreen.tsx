@@ -14,15 +14,18 @@ import { ChartAreaInteractive } from "@/features/Dashboard/presentation/componen
 import { EditOutlineSidebar } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/EditOutlineSidebar"
 import { Outline } from "@/features/Dashboard/presentation/components/Outlines/domain/entities/Outline"
 import { SidebarInset } from "@/components/ui/sidebar"
+import { useGlobalLoader } from "@/context/GlobalLoaderContext"
 
 export function DashboardScreen() {
     const router = useRouter()
     const { data: session } = authClient.useSession()
     const { activeOrganizationId, isLoading: isOrgLoading } = useOrganization()
-    const { outlines, isLoading: isOutlinesLoading, updateOutline } = useOutlines(activeOrganizationId || undefined)
+    const { outlines, isLoading: isOutlinesLoading, updateOutline, deleteOutline } = useOutlines(activeOrganizationId || undefined)
 
     const [selectedOutline, setSelectedOutline] = useState<Outline | null>(null)
     const [isEditSidebarOpen, setIsEditSidebarOpen] = useState(false)
+
+
 
     // Redirect to verify-email if user's email is not verified
     useEffect(() => {
@@ -58,6 +61,7 @@ export function DashboardScreen() {
                         outlines={outlines}
                         isLoading={isOutlinesLoading}
                         onRowClick={handleRowClick}
+                        onDelete={deleteOutline}
                     />
                 )}
             </div>
