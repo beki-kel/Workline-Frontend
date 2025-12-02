@@ -44,10 +44,6 @@ const nextConfig: NextConfig = {
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/invitations/:path*`,
       },
       {
-        source: '/api/auth/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/:path*`,
-      },
-      {
         source: '/api/:path*',
         destination: 'http://localhost:3000/api/:path*',
       },
