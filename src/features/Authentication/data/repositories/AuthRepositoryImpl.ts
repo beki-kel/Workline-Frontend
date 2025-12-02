@@ -21,7 +21,7 @@ export class AuthRepositoryImpl implements IAuthRepository {
             email: credentials.email,
             password: credentials.password,
             name: credentials.name,
-            callbackURL: process.env.NEXT_PUBLIC_BASE_URL + "/dashboard"
+            callbackURL: process.env.NEXT_PUBLIC_BASE_URL + "/dashboard" || "https://workline-frontend.vercel.app/dashboard"
         })
 
         if (error) {

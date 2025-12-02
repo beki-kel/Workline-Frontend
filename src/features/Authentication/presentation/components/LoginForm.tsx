@@ -74,7 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggle }) => {
                                                 try {
                                                     await authClient.signIn.social({
                                                         provider: 'google',
-                                                        callbackURL: process.env.NEXT_PUBLIC_BASE_URL + "/dashboard",
+                                                        callbackURL: "https://workline-frontend.vercel.app/dashboard",
                                                     })
                                                 } catch (error) {
                                                     setIsGoogleLoading(false)
