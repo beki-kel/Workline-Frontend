@@ -11,7 +11,7 @@ export class AccountRepositoryImpl implements IAccountRepository {
     }
 
     async updateEmail(email: string, password: string): Promise<void> {
-        await authClient.changeEmail({ newEmail: email, password })
+        await authClient.changeEmail({ newEmail: email })
     }
 
     async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
