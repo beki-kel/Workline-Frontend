@@ -111,7 +111,7 @@ export function AvatarSelector({ currentImage }: AvatarSelectorProps) {
                 </div>
                 <div className="w-full flex justify-end pt-6">
                     {/* Save Button */}
-                    <Button onClick={handleSave} disabled={isUpdatingImage || selectedIndex === null} className="w-1/4">
+                    <Button onClick={handleSave} disabled={isUpdatingImage || selectedIndex === null} className="w-full sm:w-auto sm:min-w-32">
                         {isUpdatingImage && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Save Avatar
                     </Button>

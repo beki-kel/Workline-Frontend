@@ -20,30 +20,30 @@ const VideoShowcaseSection = () => {
 
     const videos = [
         {
-            title: "Real-Time Collaboration",
-            description: "Experience seamless teamwork with live updates and instant synchronization",
-            thumbnail: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&q=80",
-            videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration: "2:30"
+            title: "Creating Your First Outline",
+            description: "Learn how to create, organize, manage outlines with our intuitive dashboard interface and boost productivity up to completion.",
+            thumbnail: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&q=80",
+            videoUrl: "https://youtu.be/9tMPay7V0Dg?si=auduWx9O47cYVuT_",
+            duration: "2:15"
         },
         {
-            title: "Smart Task Management",
-            description: "Organize projects efficiently with intuitive boards and powerful automation",
-            thumbnail: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500&q=80",
-            videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration: "3:15"
+            title: "Team Collaboration Made Easy",
+            description: "See how teams assign reviewers, track progress, and work together seamlessly on outlines",
+            thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&q=80",
+            videoUrl: "https://youtu.be/JslK-jKWxAU?si=GtUEpE73DK97tPH3",
+            duration: "2:45"
         },
         {
-            title: "HD Video Conferencing",
-            description: "Connect with crystal-clear video calls and screen sharing capabilities",
-            thumbnail: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&q=80",
-            videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            duration: "1:45"
+            title: "Organization Management",
+            description: "Manage multiple organizations, switch contexts, and control team access with role-based permissions",
+            thumbnail: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&q=80",
+            videoUrl: "https://youtu.be/e39XNvk5jpo?si=O6hU7bBZKjsS7pes",
+            duration: "1:50"
         }
     ]
 
     return (
-        <section ref={containerRef} className="relative py-24 px-10 overflow-hidden">
+        <section ref={containerRef} className="relative py-16 md:py-24 px-4 md:px-6 lg:px-10 overflow-hidden">
             <motion.div
                 style={{ opacity, scale, y }}
                 className="max-w-7xl mx-auto"
@@ -54,18 +54,18 @@ const VideoShowcaseSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.7 }}
-                    className="text-center mb-12"
+                    className="text-center mb-12 px-4"
                 >
-                    <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
                         See Workline In Action
                     </h2>
-                    <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                        Watch how teams transform their workflow with Workline's powerful features.
+                    <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+                        Watch how teams streamline their content workflow with Workline's powerful outline management features.
                     </p>
                 </motion.div>
 
                 {/* Video Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4 md:px-8 lg:px-16">
                     {videos.map((video, index) => (
                         <motion.div
                             key={video.title}

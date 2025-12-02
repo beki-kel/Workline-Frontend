@@ -139,7 +139,7 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <SheetContent className="w-[540px] sm:w-[540px] overflow-y-auto px-4">
+            <SheetContent className="w-full sm:w-[540px] overflow-y-auto px-4">
                 <SheetHeader className="mb-4">
                     <div className="space-y-1">
                         <h2 className="text-lg font-semibold leading-none tracking-tight">{formData.header || "Cover page"}</h2>
@@ -282,11 +282,11 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
                         </Select>
                     </div>
                 </div>
-                <SheetFooter className="mt-4">
-                    <Button variant="outline" onClick={onClose} className="w-full">
+                <SheetFooter className="mt-4 flex-col sm:flex-row gap-2">
+                    <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
                         Done
                     </Button>
-                    <Button onClick={handleSubmit} disabled={isLoading} className="w-full">
+                    <Button onClick={handleSubmit} disabled={isLoading} className="w-full sm:w-auto">
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Submit
                     </Button>

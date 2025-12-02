@@ -4,9 +4,16 @@ import React from 'react'
 import { Github, Twitter, Linkedin, Instagram } from 'lucide-react'
 
 const Footer = () => {
+    const scrollToSection = (sectionId: string) => {
+        const element = document.getElementById(sectionId)
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+    }
+
     return (
         <footer className="bg-background border-t border-border/40 py-12 px-6">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="col-span-1 md:col-span-2">
                     <div className="flex items-center gap-2 mb-4 group cursor-pointer">
                         <div className="bg-white/90 dark:bg-white/95 rounded-xl p-2 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md">
@@ -19,7 +26,7 @@ const Footer = () => {
                         <span className="text-xl font-bold transition-all duration-300 group-hover:translate-x-1">Workline</span>
                     </div>
                     <p className="text-muted-foreground max-w-sm mb-6">
-                        A secure and easy-to-use platform that brings together messaging, video calling, and task management.
+                        Streamline your content creation workflow with collaborative outline management, team coordination, and quality tracking.
                     </p>
                     <div className="flex gap-4">
                         <a
@@ -49,54 +56,40 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className="group">
-                    <h3 className="font-semibold mb-4 transition-all duration-300 group-hover:translate-x-1">Product</h3>
+                <div className="group md:ml-auto">
+                    <h3 className="font-semibold mb-4 transition-all duration-300 group-hover:translate-x-1">Quick Links</h3>
                     <ul className="space-y-2">
                         <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
+                            <button
+                                onClick={() => scrollToSection('hero')}
+                                className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block cursor-pointer"
+                            >
+                                Home
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                onClick={() => scrollToSection('features')}
+                                className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block cursor-pointer"
+                            >
                                 Features
-                            </a>
+                            </button>
                         </li>
                         <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                Pricing
-                            </a>
+                            <button
+                                onClick={() => scrollToSection('showcase')}
+                                className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block cursor-pointer"
+                            >
+                                Showcase
+                            </button>
                         </li>
                         <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                Integrations
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                Changelog
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div className="group">
-                    <h3 className="font-semibold mb-4 transition-all duration-300 group-hover:translate-x-1">Company</h3>
-                    <ul className="space-y-2">
-                        <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                Careers
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                Blog
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block">
-                                Contact
-                            </a>
+                            <button
+                                onClick={() => scrollToSection('videos')}
+                                className="text-muted-foreground hover:text-foreground transition-all duration-300 hover:translate-x-2 inline-block cursor-pointer"
+                            >
+                                Videos
+                            </button>
                         </li>
                     </ul>
                 </div>

@@ -21,23 +21,23 @@ const TableShowcaseSection = () => {
     return (
         <section
             ref={containerRef}
-            className="relative min-h-screen flex items-center justify-center py-32 px-6 overflow-hidden"
+            className="relative min-h-screen flex items-center justify-center py-20 md:py-32 px-4 md:px-6 overflow-hidden"
         >
             <div className="max-w-7xl mx-auto w-full">
                 {/* Text Content */}
                 <motion.div
-                    className="text-center mb-16"
+                    className="text-center mb-16 px-4"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
                 >
-                    <h2 className="text-5xl md:text-6xl font-bold mb-6">
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
                         Powerful Outline Management
                     </h2>
-                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
                         Organize your team's work with our intuitive table interface.
-                        Create, edit, and manage outlines with ease.
+                        Create, edit, assign reviewers, track status, and manage outlines with drag-and-drop ease.
                     </p>
                 </motion.div>
 

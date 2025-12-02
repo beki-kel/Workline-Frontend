@@ -14,11 +14,19 @@ const HomeScreen = () => {
         <>
             <AuroraBackground>
                 <Navbar />
-                <HeroSection />
+                <div id="hero">
+                    <HeroSection />
+                </div>
             </AuroraBackground>
-            <FeaturesSection />
-            <TableShowcaseSection />
-            <VideoShowcaseSection />
+            <div id="features">
+                <FeaturesSection />
+            </div>
+            <div id="showcase">
+                <TableShowcaseSection />
+            </div>
+            <div id="videos">
+                <VideoShowcaseSection />
+            </div>
             <Footer />
         </>
     )

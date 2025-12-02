@@ -20,7 +20,7 @@ const FeaturesSection = () => {
     return (
         <section
             ref={containerRef}
-            className="relative min-h-screen flex items-center justify-center py-32 px-10 overflow-hidden"
+            className="relative min-h-screen flex items-center justify-center py-20 md:py-32 px-4 md:px-6 lg:px-10 overflow-hidden"
         >
             <motion.div
                 style={{
@@ -39,15 +39,15 @@ const FeaturesSection = () => {
                     transition={{ duration: 0.7, ease: "easeOut" }}
                     className="max-w-7xl mx-auto mb-20 text-center"
                 >
-                    <h2 className="text-5xl md:text-6xl font-bold mb-6">
-                        Everything you need to build
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                        Everything you need to manage content
                     </h2>
-                    <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                        Powerful features to help you manage your projects, collaborate with your team, and ship faster.
+                    <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4">
+                        Powerful features designed for teams who create content collaboratively. Manage outlines, track progress, and ensure quality at scale.
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto">
                     {grid.map((feature, index) => (
                         <motion.div
                             key={feature.title}
@@ -89,44 +89,44 @@ const FeaturesSection = () => {
 
 const grid = [
     {
-        title: "Collaborative Editing",
+        title: "Outline Management",
         description:
-            "Work together in real-time with your team, clients, and stakeholders. Collaborate on documents, share ideas, and make decisions quickly.",
+            "Create, edit, and organize content outlines with an intuitive interface. Structure your content workflow from concept to completion.",
     },
     {
-        title: "Real time changes",
+        title: "Real-time Collaboration",
         description:
-            "See changes as they happen. With our platform, you can track every modification in real time. No more confusion about the latest version.",
+            "Work together in real-time with your team. See changes as they happen and collaborate seamlessly on outlines and content.",
     },
     {
-        title: "Version control",
+        title: "Status Tracking",
         description:
-            "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version.",
+            "Track outline progress with visual status indicators. Move work through Pending, In Progress, and Completed stages effortlessly.",
     },
     {
-        title: "Content Management",
+        title: "Reviewer Assignment",
         description:
-            "Plan and organize your social media content with an intuitive calendar view, ensuring you never miss a post.",
+            "Assign team members as reviewers for quality control. Ensure every outline gets the attention and expertise it needs.",
     },
     {
-        title: "Audience Targeting",
+        title: "Organization Management",
         description:
-            "Reach the right audience with advanced targeting options, including demographics, interests, and behaviors.",
-    },
-    {
-        title: "Social Listening",
-        description:
-            "Monitor social media conversations and trends to stay informed about what your audience is saying and respond in real-time.",
-    },
-    {
-        title: "Customizable Templates",
-        description:
-            "Create stunning social media posts with our customizable templates, designed to fit your brand's unique style and voice.",
+            "Create and manage multiple organizations. Switch contexts easily and maintain separate workspaces for different teams or projects.",
     },
     {
         title: "Team Collaboration",
         description:
-            "Work seamlessly with your team using our collaboration tools, allowing you to assign tasks, share drafts, and provide feedback.",
+            "Invite team members, assign roles, and collaborate effectively. Role-based access ensures security while enabling teamwork.",
+    },
+    {
+        title: "Secure Authentication",
+        description:
+            "Built on Better Auth for enterprise-grade security. Protect your content and team data with modern authentication standards.",
+    },
+    {
+        title: "Intuitive Dashboard",
+        description:
+            "Navigate your work with a clean, organized dashboard. Access outlines, manage teams, and track progress from one central location.",
     },
 ];
 

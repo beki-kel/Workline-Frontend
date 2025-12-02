@@ -108,7 +108,7 @@ export function PasswordForm() {
                     )}
 
                     <div className="w-full flex justify-end pt-6">
-                        <Button type="submit" disabled={isUpdatingPassword} className="w-1/4">
+                        <Button type="submit" disabled={isUpdatingPassword} className="w-full sm:w-auto sm:min-w-40">
                             {isUpdatingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Update Password
                         </Button>

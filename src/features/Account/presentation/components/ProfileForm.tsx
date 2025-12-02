@@ -44,7 +44,7 @@ export function ProfileForm() {
                         />
                     </div>
                     <div className="w-full flex justify-end pt-6">
-                        <Button type="submit" disabled={isUpdatingName || name === currentName} className="w-1/4">
+                        <Button type="submit" disabled={isUpdatingName || name === currentName} className="w-full sm:w-auto sm:min-w-36">
                             {isUpdatingName && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Update Profile
                         </Button>

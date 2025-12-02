@@ -39,7 +39,7 @@ const HeroSection = () => {
 
     return (
         <motion.div
-            className="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto pt-32"
+            className="relative z-10 flex flex-col items-center justify-center text-center px-4 md:px-6 max-w-5xl mx-auto pt-24 md:pt-32"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -59,19 +59,19 @@ const HeroSection = () => {
 
             {/* Main Heading */}
             <motion.h1
-                className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent leading-tight"
+                className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent leading-tight"
                 variants={itemVariants}
             >
-                Helping Your Team<br />Work Better, Together.
+                Streamline Your Content<br />Creation Workflow
             </motion.h1>
 
             {/* Description */}
             <motion.p
-                className="text-lg md:text-xl text-muted-foreground max-w-3xl mb-12 leading-relaxed"
+                className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mb-12 leading-relaxed px-4"
                 variants={itemVariants}
             >
-                A secure and easy-to-use platform that brings together messaging, video calling, and
-                task management, helping your team stay connected and organized with confidence.
+                Workline helps teams create, organize, and manage content outlines collaboratively.
+                Track progress, assign reviewers, and maintain quality with our intuitive outline management platform.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -82,18 +82,18 @@ const HeroSection = () => {
                 <Link href="/auth?mode=signup">
                     <Button
                         size="lg"
-                        className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-8 py-6 text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                        className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-8 py-6 text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                     >
-                        Try It For Free →
+                        Start Free  →
                     </Button>
                 </Link>
                 <Link href="/auth?mode=signup">
                     <Button
                         size="lg"
-                        className="glassmorphic rounded-full px-8 py-6 text-lg hover:bg-white/20 transition-all duration-300 hover:scale-105 text-foreground"
+                        className="glassmorphic rounded-full px-8 py-6 text-base md:text-lg hover:bg-white/20 transition-all duration-300 hover:scale-105 text-foreground"
                     >
                         <Users className="mr-2 h-5 w-5" />
-                        Join a Team
+                        Join Organization
                     </Button>
                 </Link>
             </motion.div>
