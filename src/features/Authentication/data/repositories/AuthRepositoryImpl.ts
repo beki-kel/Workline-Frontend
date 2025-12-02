@@ -7,6 +7,7 @@ export class AuthRepositoryImpl implements IAuthRepository {
         const { data, error } = await authClient.signIn.email({
             email: credentials.email,
             password: credentials.password,
+            callbackURL: credentials.callbackURL,
         })
 
         if (error) {

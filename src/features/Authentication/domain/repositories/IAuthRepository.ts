@@ -3,6 +3,7 @@ import { Session } from '../entities/User'
 export interface LoginCredentials {
     email: string
     password: string
+    callbackURL?: string
 }
 
 export interface SignupCredentials {

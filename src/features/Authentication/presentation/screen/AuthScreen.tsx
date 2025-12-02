@@ -23,7 +23,7 @@ const AuthScreen = () => {
     const handleLogin = async (values: { email: string; password: string }) => {
         try {
             console.log('🔑 Attempting login...')
-            const session = await login(values)
+            const session = await login({ ...values, callbackURL: '/dashboard' })
             console.log('✅ Login response received:', session)
 
             // Give time for cookies to be set
