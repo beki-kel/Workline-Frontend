@@ -8,10 +8,6 @@ export const authClient = createAuthClient({
     ],
     fetchOptions: {
         credentials: 'include',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
     }
 })
 
