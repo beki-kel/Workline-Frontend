@@ -20,7 +20,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Workline - Clean Architecture",
+  title: "Workline",
   description: "Modern Next.js application with Clean Architecture",
 };
 
