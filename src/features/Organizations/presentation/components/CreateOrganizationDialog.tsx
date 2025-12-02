@@ -34,7 +34,7 @@ interface CreateOrganizationDialogProps {
 
 export const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ trigger, open, onOpenChange }) => {
     const { createOrganization } = useOrganization()
-    const { toast } = useToast()
+    const { success, error } = useToast()
     const [isOpen, setIsOpen] = React.useState(false)
 
     // Handle controlled/uncontrolled state
@@ -45,19 +45,11 @@ export const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> =
     const handleCreate = async (values: { name: string; slug: string }, { setSubmitting, resetForm }: any) => {
         try {
             await createOrganization(values)
-            toast({
-                title: "Success",
-                description: "Organization created successfully",
-                variant: "default",
-            })
+            success("Organization created successfully")
             resetForm()
             setShow?.(false)
-        } catch (error: any) {
-            toast({
-                title: "Error",
-                description: error.message || "Failed to create organization",
-                variant: "destructive",
-            })
+        } catch (err: any) {
+            error(err.message || "Failed to create organization")
         } finally {
             setSubmitting(false)
         }

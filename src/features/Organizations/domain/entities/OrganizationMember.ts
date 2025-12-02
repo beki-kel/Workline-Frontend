@@ -8,5 +8,5 @@ export interface OrganizationMember {
         email: string
         image?: string
     }
-    createdAt: string
+    createdAt: Date
 }
