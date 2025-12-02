@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useToast } from '@/features/Core/application/hooks/useToast'
 import { ToastContainer } from '@/features/Core/shared/components/ToastContainer'
 import { useAuth } from '@/features/Authentication/application/hooks/useAuth'
+import { authClient } from '@/lib/auth-client'
 import { LoginForm } from '../components/LoginForm'
 import { SignupForm } from '../components/SignupForm'
 import { GalleryVerticalEnd } from 'lucide-react'
@@ -21,14 +22,36 @@ const AuthScreen = () => {
 
     const handleLogin = async (values: { email: string; password: string }) => {
         try {
+            console.log('🔑 Attempting login...')
             const session = await login(values)
-            console.log('Login successful', session)
-            success('Login successful! Redirecting...')
-            setTimeout(() => {
-                router.push('/dashboard')
-            }, 1000)
+            console.log('✅ Login response received:', session)
+
+            // Give time for cookies to be set
+            await new Promise(resolve => setTimeout(resolve, 800))
+
+            // Verify session was actually established
+            console.log('🔍 Verifying session...')
+            const { data: verifiedSession, error: sessionError } = await authClient.getSession()
+            console.log('📋 Session verification result:', { verifiedSession, sessionError })
+
+            if (sessionError) {
+                console.error('❌ Session verification error:', sessionError)
+                error('Session verification failed. Please try again.')
+                return
+            }
+
+            if (verifiedSession) {
+                console.log('✅ Session verified successfully, redirecting to dashboard...')
+                success('Login successful! Redirecting...')
+                setTimeout(() => {
+                    router.push('/dashboard')
+                }, 500)
+            } else {
+                console.error('❌ No session data after login')
+                error('Login succeeded but session not established. Please check your browser cookies or try again.')
+            }
         } catch (err: any) {
-            console.error('Login failed', err)
+            console.error('❌ Login failed:', err)
             error(err.message || 'Login failed. Please try again.')
         }
     }

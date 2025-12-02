@@ -8,9 +8,12 @@ export const authClient = createAuthClient({
     ],
     fetchOptions: {
         credentials: 'include',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
     }
 })
 
 // Log to verify configuration
 console.log('🔐 Auth Client configured with baseURL:', process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000")
-

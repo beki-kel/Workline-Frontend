@@ -74,7 +74,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggle }) => {
                                                 try {
                                                     await authClient.signIn.social({
                                                         provider: 'google',
-                                                        callbackURL: 'http://localhost:3001/dashboard',
+                                                        callbackURL: process.env.NEXT_PUBLIC_BASE_URL + "/dashboard",
                                                     })
                                                 } catch (error) {
                                                     setIsGoogleLoading(false)
