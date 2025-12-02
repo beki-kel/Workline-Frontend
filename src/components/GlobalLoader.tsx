@@ -10,7 +10,7 @@ export function GlobalLoader() {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-            <div className="h-64 w-64 dark:invert">
+            <div className="h-32 w-32 dark:invert">
                 <DotLottieReact
                     src="https://lottie.host/9bb78450-71c3-4504-8131-93881a04bc9e/3EHJAvNhCk.lottie"
                     loop

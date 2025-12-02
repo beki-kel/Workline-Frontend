@@ -12,7 +12,7 @@ import { Loader2 } from "lucide-react"
 import { useOrganization } from "@/features/Organizations/application/hooks/useOrganization"
 import { OutlineRepositoryImpl } from "../../data/repositories/OutlineRepositoryImpl"
 import { CreateOutlineUseCase } from "../../application/usecases/CreateOutlineUseCase"
-import { useToast } from "@/features/Core/application/hooks/useToast"
+import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { cn } from "@/lib/utils"
 import { useOrganizationMembers } from "@/features/Organizations/presentation/hooks/useOrganizationMembers"
@@ -42,7 +42,6 @@ export function CreateOutlineDialog({ trigger, open, onOpenChange }: CreateOutli
     const setIsOpen = isControlled ? onOpenChange! : setInternalOpen
 
     const { activeOrganizationId } = useOrganization()
-    const { toast } = useToast()
     const queryClient = useQueryClient()
 
     const { data: members } = useOrganizationMembers(activeOrganizationId)
@@ -70,10 +69,13 @@ export function CreateOutlineDialog({ trigger, open, onOpenChange }: CreateOutli
 
             toast.success("Outline created successfully!")
 
+            // Invalidate and refetch to ensure UI updates
             await queryClient.invalidateQueries({ queryKey: ['outlines', activeOrganizationId] })
+
             resetForm()
             setIsOpen(false)
         } catch (error) {
+            console.error("Failed to create outline:", error)
             toast.error("Failed to create outline. Please try again.")
         }
     }
@@ -153,7 +155,6 @@ export function CreateOutlineDialog({ trigger, open, onOpenChange }: CreateOutli
                                             <SelectItem value="PENDING">Pending</SelectItem>
                                             <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
                                             <SelectItem value="COMPLETED">Completed</SelectItem>
-                                            <SelectItem value="ARCHIVED">Archived</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

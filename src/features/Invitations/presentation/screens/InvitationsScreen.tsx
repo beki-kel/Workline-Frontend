@@ -11,11 +11,15 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { authClient } from "@/lib/auth-client"
 import { useOrganization } from "@/features/Organizations/application/hooks/useOrganization"
 import { PermissionChecks } from "@/lib/permissions"
+import { toast } from "sonner"
+
+import { useQueryClient } from "@tanstack/react-query"
 
 // Initialize repository
 const invitationsRepository = new InvitationsRepositoryImpl()
 
 export default function InvitationsScreen() {
+    const queryClient = useQueryClient()
     const [receivedInvitations, setReceivedInvitations] = useState<Invitation[]>([])
     const [sentInvitations, setSentInvitations] = useState<Invitation[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -49,13 +53,24 @@ export default function InvitationsScreen() {
     }, [organizationId, canManageInvitations])
 
     const handleAccept = async (invitationId: string) => {
-        await invitationsRepository.acceptInvitation(invitationId)
-        fetchInvitations() // Refresh list
+        try {
+            await invitationsRepository.acceptInvitation(invitationId)
+            toast.success("Invitation accepted successfully")
+            await queryClient.invalidateQueries({ queryKey: ['organizations'] })
+            fetchInvitations() // Refresh list
+        } catch (error: any) {
+            toast.error(error.message || "Failed to accept invitation")
+        }
     }
 
     const handleReject = async (invitationId: string) => {
-        await invitationsRepository.rejectInvitation(invitationId)
-        fetchInvitations() // Refresh list
+        try {
+            await invitationsRepository.rejectInvitation(invitationId)
+            toast.success("Invitation declined")
+            fetchInvitations() // Refresh list
+        } catch (error: any) {
+            toast.error(error.message || "Failed to decline invitation")
+        }
     }
 
     if (isLoading) {

@@ -1,11 +1,12 @@
 "use client"
 
-import * as React from "react"
+import { useEffect } from "react"
 import {
   LayoutDashboard,
   Users,
   MailIcon,
   Settings,
+  User,
 } from "lucide-react"
 
 import { NavUser } from "@/components/nav-user"
@@ -47,20 +48,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const canAccessMembers = PermissionChecks.canAccessMembers(currentUserRole)
   const canManageInvitations = PermissionChecks.canManageInvitations(currentUserRole)
 
+  // Handle navigation loading state
+  useEffect(() => {
+    hideLoader()
+  }, [pathname])
+
   const handleNavigation = (path: string) => {
     if (pathname !== path) {
       showLoader()
-      // Hide loader after a short delay to allow transition
-      setTimeout(() => {
-        hideLoader()
-      }, 1000)
     }
   }
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <OrganizationSwitcher />
+        <div id="org-switcher">
+          <OrganizationSwitcher />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -69,6 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  id="nav-outlines"
                   asChild
                   isActive={pathname === "/dashboard"}
                   className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
@@ -84,6 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {canAccessMembers && (
                 <SidebarMenuItem>
                   <SidebarMenuButton
+                    id="nav-members"
                     asChild
                     isActive={pathname === "/dashboard/members"}
                     className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
@@ -99,6 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  id="nav-invitations"
                   asChild
                   isActive={pathname === "/dashboard/invitations"}
                   className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
@@ -110,12 +117,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  id="nav-account"
+                  asChild
+                  isActive={pathname === "/dashboard/account"}
+                  className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                  onClick={() => handleNavigation("/dashboard/account")}
+                >
+                  <Link href="/dashboard/account">
+                    <User className="h-4 w-4" />
+                    <span>Account</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

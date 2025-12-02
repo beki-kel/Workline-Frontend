@@ -6,60 +6,99 @@ export class InvitationsRepositoryImpl implements IInvitationRepository {
     async getReceivedInvitations(): Promise<Invitation[]> {
         console.log('🔔 Fetching received invitations for current user');
 
-        try {
-            const response = await fetch('/api/auth/invitation/list-user', {
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+        const { data, error } = await authClient.organization.listUserInvitations();
 
-            console.log('📡 Response status:', response.status, response.statusText);
+        if (error) {
+            console.error('❌ Failed to fetch received invitations:', error);
+            throw new Error(error.message || "Failed to fetch received invitations");
+        }
 
-            if (!response.ok) {
-                console.error('❌ Failed to fetch received invitations:', response.status);
-                throw new Error('Failed to fetch received invitations');
+        if (!data) return [];
+
+        const invitations = await Promise.all(data.map(async (inv) => {
+            let orgDetails = {
+                id: inv.organizationId,
+                name: "Unknown Organization",
+                slug: "",
+                logo: null as string | null
+            };
+
+            try {
+                const { data: orgData } = await authClient.organization.getFullOrganization({
+                    query: {
+                        organizationId: inv.organizationId
+                    }
+                });
+
+                if (orgData) {
+                    orgDetails = {
+                        id: orgData.id,
+                        name: orgData.name,
+                        slug: orgData.slug,
+                        logo: orgData.logo || null
+                    };
+                }
+            } catch (e) {
+                console.warn(`Failed to fetch details for org ${inv.organizationId}`, e);
             }
 
-            const data = await response.json();
-            console.log('✅ Received invitations fetched successfully:', data.length, 'invitations');
-            console.log('📦 Invitations data:', JSON.stringify(data, null, 2));
+            return {
+                ...inv,
+                organization: orgDetails
+            } as Invitation;
+        }));
 
-            return data as Invitation[];
-        } catch (error) {
-            console.error('❌ Error fetching received invitations:', error);
-            throw new Error(error instanceof Error ? error.message : "Failed to fetch received invitations");
-        }
+        console.log('✅ Received invitations fetched successfully:', invitations.length, 'invitations');
+        return invitations;
     }
 
     async getSentInvitations(organizationId: string): Promise<Invitation[]> {
         console.log('🔔 Fetching sent invitations for organization:', organizationId);
 
-        try {
-            const response = await fetch(`/api/auth/organization/list-invitations?organizationId=${organizationId}`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+        const { data, error } = await authClient.organization.listInvitations({
+            query: { organizationId }
+        });
 
-            console.log('📡 Response status:', response.status, response.statusText);
-
-            if (!response.ok) {
-                console.error('❌ Failed to fetch sent invitations:', response.status);
-                throw new Error('Failed to fetch sent invitations');
-            }
-
-            const data = await response.json();
-            console.log('✅ Sent invitations fetched successfully:', data.length, 'invitations');
-            console.log('📦 Invitations data:', JSON.stringify(data, null, 2));
-
-            return data as Invitation[];
-        } catch (error) {
-            console.error('❌ Error fetching sent invitations:', error);
-            throw new Error(error instanceof Error ? error.message : "Failed to fetch sent invitations");
+        if (error) {
+            console.error('❌ Failed to fetch sent invitations:', error);
+            throw new Error(error.message || "Failed to fetch sent invitations");
         }
+
+        if (!data) return [];
+
+        // Fetch organization details once
+        let orgDetails = {
+            id: organizationId,
+            name: "Current Organization",
+            slug: "",
+            logo: null as string | null
+        };
+
+        try {
+            const { data: orgData } = await authClient.organization.getFullOrganization({
+                query: {
+                    organizationId
+                }
+            });
+            if (orgData) {
+                orgDetails = {
+                    id: orgData.id,
+                    name: orgData.name,
+                    slug: orgData.slug,
+                    logo: orgData.logo || null
+                };
+            }
+        } catch (e) {
+            console.warn(`Failed to fetch details for org ${organizationId}`, e);
+        }
+
+        const invitations = data.map(inv => ({
+            ...inv,
+            organization: orgDetails
+        })) as Invitation[];
+
+        console.log('✅ Sent invitations fetched successfully:', invitations.length, 'invitations');
+        return invitations;
     }
 
     async acceptInvitation(invitationId: string): Promise<void> {

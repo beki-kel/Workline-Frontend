@@ -16,6 +16,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { useOrganization } from "@/features/Organizations/application/hooks/useOrganization"
+import { DashboardTour } from "@/features/Dashboard/presentation/components/DashboardTour"
 
 
 export default function DashboardLayout({
@@ -35,6 +36,7 @@ export default function DashboardLayout({
                     {children}
                 </div>
             </SidebarInset>
+            <DashboardTour />
         </SidebarProvider>
     )
 }

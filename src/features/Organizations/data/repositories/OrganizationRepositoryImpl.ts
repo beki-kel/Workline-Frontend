@@ -1,5 +1,4 @@
 import { authClient } from '@/lib/auth-client'
-import { apiClient } from '@/lib/api-client'
 import { Organization, ActiveOrganization } from '../../domain/entities/Organization'
 import { OrganizationMember } from '../../domain/entities/OrganizationMember'
 import { IOrganizationRepository } from '../../domain/repositories/IOrganizationRepository'
@@ -63,7 +62,14 @@ export class OrganizationRepositoryImpl implements IOrganizationRepository {
         }
     }
     async getOrganizationMembers(organizationId: string): Promise<OrganizationMember[]> {
-        const data = await apiClient.get(`/api/organizations/${organizationId}/members`)
-        return data as OrganizationMember[]
+        const { data, error } = await authClient.organization.listMembers({
+            query: { organizationId }
+        })
+
+        if (error) {
+            throw new Error(error.message || "Failed to fetch organization members")
+        }
+
+        return data?.members as OrganizationMember[] || []
     }
 }

@@ -17,15 +17,17 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useOrganization } from "@/features/Organizations/application/hooks/useOrganization"
+import { useOrganizationMembers } from "@/features/Organizations/presentation/hooks/useOrganizationMembers"
 
 const chartConfig = {
-    desktop: {
-        label: "Desktop",
-        color: "hsl(var(--chart-1))",
+    completed: {
+        label: "Completed",
+        color: "hsl(var(--chart-2))", // Green-ish usually chart-2 based on previous edits or standard
     },
-    mobile: {
-        label: "Mobile",
-        color: "hsl(var(--chart-2))",
+    in_progress: {
+        label: "In Progress",
+        color: "hsl(var(--chart-4))", // Yellow-ish usually
     },
 } satisfies ChartConfig
 
@@ -47,36 +49,64 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
         reviewer: ""
     })
 
+    const { activeOrganizationId } = useOrganization()
+    const { data: members } = useOrganizationMembers(activeOrganizationId)
+
+    // Filter members for reviewers (Owner or Admin)
+    const reviewers = members?.filter(member =>
+        member.role === 'owner' || member.role === 'admin'
+    ) || []
+
     useEffect(() => {
         if (outline) {
             setFormData({
                 header: outline.header || "",
                 type: "article", // Mock default
-                status: outline.status || "draft",
+                status: outline.status?.toLowerCase() || "pending",
                 target: outline.target?.toString() || "18", // Mock default
                 limit: outline.limit?.toString() || "5", // Mock default
-                reviewer: "Eddie Lake" // Mock default
+                reviewer: outline.reviewerId || ""
             })
         }
     }, [outline])
 
-    // Generate chart data based on the target value to simulate "real" data scaling
+    // Generate chart data based on status (showing percentages 0-100)
     const chartData = useMemo(() => {
-        const baseValue = parseInt(formData.target) || 100
+        const status = formData.status
         const months = ["January", "February", "March", "April", "May", "June"]
 
-        return months.map(month => ({
-            month,
-            desktop: Math.floor(baseValue * (0.8 + Math.random() * 0.4)), // +/- 20% of target
-            mobile: Math.floor(baseValue * (0.4 + Math.random() * 0.4))  // Lower for mobile
-        }))
-    }, [formData.target])
+        return months.map((month, index) => {
+            let completedPercentage = 0
+            let inProgressPercentage = 0
+
+            if (status === 'completed') {
+                // Completed percentage grows from 60% to 100%
+                completedPercentage = Math.floor(60 + (index / 5) * 40)
+                inProgressPercentage = 0
+            } else if (status === 'in_progress') {
+                // In Progress percentage grows from 30% to 80%
+                inProgressPercentage = Math.floor(30 + (index / 5) * 50)
+                completedPercentage = 0
+            } else {
+                // Pending - minimal activity (10%)
+                inProgressPercentage = 10
+                completedPercentage = 0
+            }
+
+            return {
+                month,
+                completed: completedPercentage,
+                in_progress: inProgressPercentage
+            }
+        })
+    }, [formData.status])
 
     // Calculate trending percentage
     const trendingPercentage = useMemo(() => {
         if (chartData.length < 2) return 0
-        const lastMonth = chartData[chartData.length - 1].desktop
-        const prevMonth = chartData[chartData.length - 2].desktop
+        const lastMonth = chartData[chartData.length - 1].completed + chartData[chartData.length - 1].in_progress
+        const prevMonth = chartData[chartData.length - 2].completed + chartData[chartData.length - 2].in_progress
+        if (prevMonth === 0) return 100
         return ((lastMonth - prevMonth) / prevMonth * 100).toFixed(1)
     }, [chartData])
 
@@ -92,9 +122,10 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
             await onUpdate({
                 ...outline,
                 header: formData.header,
-                status: formData.status as any,
+                status: formData.status.toUpperCase() as any,
                 target: parseInt(formData.target) || 0,
-                limit: parseInt(formData.limit) || 0
+                limit: parseInt(formData.limit) || 0,
+                reviewerId: formData.reviewer
             })
 
             toast.success("AI Response: Outline updated successfully based on your changes.")
@@ -142,19 +173,19 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
                                 content={<ChartTooltipContent indicator="dot" />}
                             />
                             <Area
-                                dataKey="mobile"
+                                dataKey="in_progress"
                                 type="natural"
-                                fill="var(--color-mobile)"
+                                fill="var(--color-in_progress)"
                                 fillOpacity={0.4}
-                                stroke="var(--color-mobile)"
+                                stroke="var(--color-in_progress)"
                                 stackId="a"
                             />
                             <Area
-                                dataKey="desktop"
+                                dataKey="completed"
                                 type="natural"
-                                fill="var(--color-desktop)"
+                                fill="var(--color-completed)"
                                 fillOpacity={0.4}
-                                stroke="var(--color-desktop)"
+                                stroke="var(--color-completed)"
                                 stackId="a"
                             />
                         </AreaChart>
@@ -205,7 +236,7 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
                                     <SelectValue placeholder="Select status" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="draft">Draft</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
                                     <SelectItem value="in_progress">In Progress</SelectItem>
                                     <SelectItem value="completed">Completed</SelectItem>
                                 </SelectContent>
@@ -242,9 +273,11 @@ export function EditOutlineSidebar({ outline, isOpen, onClose, onUpdate }: EditO
                                 <SelectValue placeholder="Select reviewer" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                                <SelectItem value="Sarah Smith">Sarah Smith</SelectItem>
-                                <SelectItem value="John Doe">John Doe</SelectItem>
+                                {reviewers.map((reviewer) => (
+                                    <SelectItem key={reviewer.id} value={reviewer.user.id}>
+                                        {reviewer.user.name} ({reviewer.user.email})
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>

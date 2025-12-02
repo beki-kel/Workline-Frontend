@@ -41,12 +41,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import {
@@ -61,7 +55,10 @@ import {
     Columns3,
     ChevronDown,
     Eye,
-    Loader2
+    Loader2,
+    CheckCircle2,
+    Clock,
+    CircleDashed
 } from "lucide-react"
 import { CreateOutlineDialog } from "./CreateOutlineDialog"
 import {
@@ -91,6 +88,7 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
     })
     const [showCreateDialog, setShowCreateDialog] = React.useState(false)
     const [outlineToDelete, setOutlineToDelete] = React.useState<string | null>(null)
+    const [showBulkDeleteDialog, setShowBulkDeleteDialog] = React.useState(false)
     const [isDeleting, setIsDeleting] = React.useState(false)
 
     const handleDelete = async () => {
@@ -102,6 +100,34 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
             } finally {
                 setIsDeleting(false)
             }
+        }
+    }
+
+    const handleBulkDelete = async () => {
+        if (!onDelete) return
+
+        const selectedRows = table.getFilteredSelectedRowModel().rows
+        if (selectedRows.length === 0) return
+
+        setIsDeleting(true)
+        try {
+            // Delete all selected outlines
+            await Promise.all(
+                selectedRows.map(row => onDelete(row.original.id))
+            )
+
+            // Success feedback
+            const { toast } = await import('sonner')
+            toast.success(`Successfully deleted ${selectedRows.length} outline${selectedRows.length > 1 ? 's' : ''}`)
+
+            // Clear selection after successful delete
+            setRowSelection({})
+            setShowBulkDeleteDialog(false)
+        } catch (error) {
+            const { toast } = await import('sonner')
+            toast.error('Failed to delete selected outlines')
+        } finally {
+            setIsDeleting(false)
         }
     }
 
@@ -154,16 +180,33 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
             header: "Status",
             cell: ({ row }) => {
                 const status = row.original.status
-                const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-                    'pending': 'secondary',
-                    'in_progress': 'default',
-                    'completed': 'outline',
-                    'archived': 'destructive',
+                const normalizedStatus = status.toLowerCase()
+
+                const config = {
+                    'pending': {
+                        label: 'Pending',
+                        icon: CircleDashed,
+                        className: 'bg-white text-black border-gray-200 dark:bg-gray-950 dark:text-gray-300 dark:border-gray-800'
+                    },
+                    'in_progress': {
+                        label: 'In Progress',
+                        icon: Clock,
+                        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800'
+                    },
+                    'completed': {
+                        label: 'Completed',
+                        icon: CheckCircle2,
+                        className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800'
+                    }
                 }
 
+                const statusConfig = config[normalizedStatus as keyof typeof config] || config['pending']
+                const Icon = statusConfig.icon
+
                 return (
-                    <Badge variant={variants[status.toLowerCase()] || 'default'} className="text-muted-foreground px-1.5">
-                        {status.replace(/_/g, ' ')}
+                    <Badge variant="outline" className={`${statusConfig.className} px-2 py-0.5 gap-1.5`}>
+                        <Icon className="h-3.5 w-3.5" />
+                        {statusConfig.label}
                     </Badge>
                 )
             },
@@ -272,12 +315,28 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
     }
 
     return (
-        <Tabs defaultValue="outlines" className="w-full flex-col justify-start gap-6">
+        <div className="w-full flex flex-col justify-start gap-6">
             <div className="flex items-center justify-between px-4 lg:px-6">
                 <Label htmlFor="view-selector" className="sr-only">View</Label>
 
-
                 <div className="flex items-center justify-end gap-2 w-full">
+                    {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setShowBulkDeleteDialog(true)}
+                            disabled={isDeleting}
+                        >
+                            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            <Trash2 className="h-4 w-4" />
+                            <span className="hidden lg:inline">
+                                Delete Selected ({table.getFilteredSelectedRowModel().rows.length})
+                            </span>
+                            <span className="lg:hidden">
+                                Delete ({table.getFilteredSelectedRowModel().rows.length})
+                            </span>
+                        </Button>
+                    )}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm">
@@ -309,7 +368,7 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
                     </Button>
                 </div>
             </div>
-            <TabsContent value="outlines" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+            <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
                 <div className="rounded-lg border overflow-x-auto">
                     <Table>
                         <TableHeader className="bg-muted sticky top-0 z-10">
@@ -421,7 +480,7 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
                         </div>
                     </div>
                 </div>
-            </TabsContent>
+            </div>
             <CreateOutlineDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
 
             <Dialog open={!!outlineToDelete} onOpenChange={(open) => !open && setOutlineToDelete(null)}>
@@ -441,7 +500,25 @@ export function OutlinesTable({ outlines, isLoading, onRowClick, onDelete }: Out
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </Tabs>
+
+            <Dialog open={showBulkDeleteDialog} onOpenChange={(open) => !open && setShowBulkDeleteDialog(false)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete Selected Outlines?</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete {table.getFilteredSelectedRowModel().rows.length} selected outline{table.getFilteredSelectedRowModel().rows.length > 1 ? 's' : ''}? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowBulkDeleteDialog(false)} disabled={isDeleting}>Cancel</Button>
+                        <Button variant="destructive" onClick={handleBulkDelete} disabled={isDeleting}>
+                            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
     )
 }
 

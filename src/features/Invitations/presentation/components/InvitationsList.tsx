@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Invitation } from "../../domain/entities/Invitation"
-import { Check, X, Building2, Calendar } from "lucide-react"
+import { Check, X, Building2, Calendar, Loader2 } from "lucide-react"
+import { useState } from "react"
 
 interface InvitationsListProps {
     invitations: Invitation[]
@@ -11,6 +12,17 @@ interface InvitationsListProps {
 }
 
 export function InvitationsList({ invitations, onAccept, onReject }: InvitationsListProps) {
+    const [processingId, setProcessingId] = useState<string | null>(null)
+
+    const handleAction = async (id: string, action: (id: string) => Promise<void>) => {
+        setProcessingId(id)
+        try {
+            await action(id)
+        } finally {
+            setProcessingId(null)
+        }
+    }
+
     if (invitations.length === 0) {
         return (
             <Card>
@@ -65,21 +77,35 @@ export function InvitationsList({ invitations, onAccept, onReject }: Invitations
                                 </span>
                             </div>
                             <div className="flex gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => onReject(invitation.id)}
-                                >
-                                    <X className="h-4 w-4 mr-1" />
-                                    Decline
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    onClick={() => onAccept(invitation.id)}
-                                >
-                                    <Check className="h-4 w-4 mr-1" />
-                                    Accept
-                                </Button>
+                                {invitation.status === 'pending' ? (
+                                    <>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleAction(invitation.id, onReject)}
+                                            disabled={processingId === invitation.id}
+                                        >
+                                            <X className="h-4 w-4 mr-1" />
+                                            Decline
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            onClick={() => handleAction(invitation.id, onAccept)}
+                                            disabled={processingId === invitation.id}
+                                        >
+                                            {processingId === invitation.id ? (
+                                                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                                            ) : (
+                                                <Check className="h-4 w-4 mr-1" />
+                                            )}
+                                            Accept
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Badge variant={invitation.status === 'accepted' ? 'default' : 'destructive'}>
+                                        {invitation.status === 'accepted' ? 'Accepted' : 'Rejected'}
+                                    </Badge>
+                                )}
                             </div>
                         </div>
                     </CardContent>

@@ -118,7 +118,9 @@ export default function MembersScreen({ params }: { params: { organizationId: st
                             Manage your organization members and roles.
                         </p>
                     </div>
-                    <InviteMemberDialog onInvite={handleInvite} />
+                    {(currentUserRole === MemberRole.ADMIN || currentUserRole === MemberRole.OWNER) && (
+                        <InviteMemberDialog onInvite={handleInvite} />
+                    )}
                 </div>
 
                 <MembersStats members={members} />
