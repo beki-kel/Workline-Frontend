@@ -128,7 +128,6 @@ export function MembersList({ members, currentUserId, currentUserRole, onRemoveM
                                                 )}
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value={MemberRole.OWNER}>Owner</SelectItem>
                                                 <SelectItem value={MemberRole.ADMIN}>Admin</SelectItem>
                                                 <SelectItem value={MemberRole.MEMBER}>Member</SelectItem>
                                             </SelectContent>

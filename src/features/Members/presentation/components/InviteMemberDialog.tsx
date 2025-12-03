@@ -89,7 +89,6 @@ export function InviteMemberDialog({ onInvite }: InviteMemberDialogProps) {
                                 <SelectContent>
                                     <SelectItem value={MemberRole.MEMBER}>Member</SelectItem>
                                     <SelectItem value={MemberRole.ADMIN}>Admin</SelectItem>
-                                    <SelectItem value={MemberRole.OWNER}>Owner</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
