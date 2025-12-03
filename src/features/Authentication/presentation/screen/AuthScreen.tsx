@@ -43,29 +43,17 @@ const AuthScreen = () => {
 
             if (verifiedSession) {
                 console.log('✅ Session verified successfully')
-
-                // Handle invitation if present
-                if (invitationId) {
-                    console.log('🎫 Accepting invitation:', invitationId)
-                    try {
-                        const { error: inviteError } = await authClient.organization.acceptInvitation({
-                            invitationId
-                        })
-                        if (inviteError) {
-                            console.error('Failed to accept invitation:', inviteError)
-                            error('Login successful but failed to accept invitation')
-                        } else {
-                            success('Login successful! Invitation accepted. Redirecting...')
-                        }
-                    } catch (inviteErr) {
-                        console.error('Error accepting invitation:', inviteErr)
-                    }
-                } else {
-                    success('Login successful! Redirecting...')
-                }
+                success('Login successful! Redirecting...')
 
                 setTimeout(() => {
-                    router.push('/dashboard')
+                    // If invitation ID is present, redirect to the invitation page
+                    // This allows the user to see the invitation details and accept it
+                    if (invitationId) {
+                        console.log('🎫 Redirecting to invitation:', invitationId)
+                        router.push(`/accept-invitation/${invitationId}`)
+                    } else {
+                        router.push('/dashboard')
+                    }
                 }, 500)
             } else {
                 console.error('❌ No session data after login')
@@ -81,31 +69,19 @@ const AuthScreen = () => {
         try {
             const session = await signup(values)
             console.log('Signup successful', session)
-
-            // Handle invitation if present
-            if (invitationId) {
-                console.log('🎫 Accepting invitation after signup:', invitationId)
-                try {
-                    const { error: inviteError } = await authClient.organization.acceptInvitation({
-                        invitationId
-                    })
-                    if (inviteError) {
-                        console.error('Failed to accept invitation:', inviteError)
-                        error('Account created but failed to accept invitation. Please check your email to verify.')
-                    } else {
-                        success('Account created and invitation accepted! Please verify your email.')
-                    }
-                } catch (inviteErr) {
-                    console.error('Error accepting invitation:', inviteErr)
-                }
-            } else {
-                success('Account created! Please check your email to verify your account.')
-            }
+            success('Account created! Please check your email to verify your account.')
 
             // Store email for resend functionality
             if (typeof window !== 'undefined') {
                 sessionStorage.setItem('signup_email', values.email)
+
+                // Store invitation ID if present - will be used after email verification
+                if (invitationId) {
+                    console.log('🎫 Storing invitation ID for later:', invitationId)
+                    sessionStorage.setItem('pending_invitation_id', invitationId)
+                }
             }
+
             setTimeout(() => {
                 router.push('/verify-email')
             }, 1500)

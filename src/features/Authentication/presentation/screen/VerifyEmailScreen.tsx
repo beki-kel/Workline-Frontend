@@ -76,6 +76,13 @@ const VerifyEmailScreen = () => {
         return ''
     })
 
+    const [pendingInvitation] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return sessionStorage.getItem('pending_invitation_id') || null
+        }
+        return null
+    })
+
     return (
         <GridBackground>
             <div className="absolute inset-0 z-0 bg-white/50 dark:bg-transparent" />
@@ -105,9 +112,26 @@ const VerifyEmailScreen = () => {
                             <p className="text-muted-foreground text-sm">
                                 We've sent a verification link to your email address. Please click the link to verify your account.
                             </p>
+                            {pendingInvitation && (
+                                <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
+                                    <p className="text-sm text-primary font-medium">
+                                        🎫 You have a pending organization invitation!
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        After verifying your email, you can accept the invitation.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                         <div className="w-full pt-4 space-y-2">
                             {email && <ResendButton email={email} />}
+                            {pendingInvitation && (
+                                <Link href={`/accept-invitation/${pendingInvitation}`}>
+                                    <Button variant="default" className="w-full">
+                                        Accept Invitation
+                                    </Button>
+                                </Link>
+                            )}
                             <Link href="/auth">
                                 <Button variant="outline" className="w-full">
                                     Back to Login

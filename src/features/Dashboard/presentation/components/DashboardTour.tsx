@@ -21,6 +21,7 @@ interface TourStep {
     description: string
     position?: "right" | "bottom" | "center"
     xOffset?: number
+    yOffset?: number
     icon?: React.ElementType
 }
 
@@ -36,6 +37,7 @@ const steps: TourStep[] = [
         title: "Workspace Switcher",
         description: "Easily switch between your different organizations or create new ones right here.",
         position: "right",
+        yOffset: 60,
         icon: Building2
     },
     {
@@ -43,7 +45,8 @@ const steps: TourStep[] = [
         title: "Your Role",
         description: "See your current role in this organization (Owner, Admin, or Member).",
         position: "bottom",
-        xOffset: -100,
+        xOffset: -150,
+        yOffset: 10,
         icon: ShieldCheck
     },
     {
@@ -153,15 +156,21 @@ export function DashboardTour() {
             y: "-50%"
         }
     } else if (step.position === "right") {
+        const topPosition = targetRect.top + (targetRect.height / 2) + (step.yOffset || 0);
+        const leftPosition = targetRect.right + 20;
+
         tooltipStyle = {
-            top: targetRect.top + (targetRect.height / 2),
-            left: targetRect.right + 20,
+            top: Math.max(20, Math.min(topPosition, window.innerHeight - 400)),
+            left: Math.min(leftPosition, window.innerWidth - 370),
             y: "-50%"
         }
     } else if (step.position === "bottom") {
+        const topPosition = targetRect.bottom + 20 + (step.yOffset || 0);
+        const leftPosition = targetRect.left + (targetRect.width / 2) + (step.xOffset || 0);
+
         tooltipStyle = {
-            top: targetRect.bottom + 20,
-            left: targetRect.left + (targetRect.width / 2) + (step.xOffset || 0),
+            top: Math.max(20, Math.min(topPosition, window.innerHeight - 300)),
+            left: Math.max(20, Math.min(leftPosition, window.innerWidth - 370)),
             x: "-50%"
         }
     }

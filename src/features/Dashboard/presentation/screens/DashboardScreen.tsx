@@ -5,16 +5,15 @@ import { useOrganization } from "@/features/Organizations/application/hooks/useO
 import { useOutlines } from "@/features/Dashboard/presentation/components/Outlines/application/hooks/useOutlines"
 import { OutlinesTable } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/OutlinesTable"
 import { EmptyOrgState } from "@/features/Organizations/presentation/components/EmptyOrgState"
-import { Skeleton } from "@/components/ui/skeleton"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { SectionCards } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/SectionCards"
 import { ChartAreaInteractive } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/ChartAreaInteractive"
 import { EditOutlineSidebar } from "@/features/Dashboard/presentation/components/Outlines/presentation/components/EditOutlineSidebar"
 import { Outline } from "@/features/Dashboard/presentation/components/Outlines/domain/entities/Outline"
 import { SidebarInset } from "@/components/ui/sidebar"
 import { useGlobalLoader } from "@/context/GlobalLoaderContext"
+import { DashboardSkeleton } from "@/features/Dashboard/presentation/components/DashboardSkeleton"
 
 export function DashboardScreen() {
     const router = useRouter()
@@ -47,24 +46,28 @@ export function DashboardScreen() {
 
     return (
         <SidebarInset>
-            <SiteHeader title="Outlines" />
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-                {isOrgLoading ? (
-                    <div className="space-y-4">
-                        <Skeleton className="h-10 w-64" />
-                        <Skeleton className="h-96 w-full" />
+            {isOrgLoading ? (
+                <DashboardSkeleton />
+            ) : !activeOrganizationId ? (
+                <>
+                    <SiteHeader title="Outlines" />
+                    <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+                        <EmptyOrgState />
                     </div>
-                ) : !activeOrganizationId ? (
-                    <EmptyOrgState />
-                ) : (
-                    <OutlinesTable
-                        outlines={outlines}
-                        isLoading={isOutlinesLoading}
-                        onRowClick={handleRowClick}
-                        onDelete={deleteOutline}
-                    />
-                )}
-            </div>
+                </>
+            ) : (
+                <>
+                    <SiteHeader title="Outlines" />
+                    <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+                        <OutlinesTable
+                            outlines={outlines}
+                            isLoading={isOutlinesLoading}
+                            onRowClick={handleRowClick}
+                            onDelete={deleteOutline}
+                        />
+                    </div>
+                </>
+            )}
 
             <EditOutlineSidebar
                 outline={selectedOutline}
