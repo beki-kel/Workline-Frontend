@@ -15,8 +15,20 @@ export default function AcceptInvitationPage() {
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     useEffect(() => {
-        async function acceptInvitation() {
+        async function handleInvitation() {
             try {
+                // First, check if user is authenticated
+                const { data: sessionData } = await authClient.getSession();
+
+                if (!sessionData?.user) {
+                    // User is not authenticated - redirect to auth page with invitation ID
+                    console.log('User not authenticated, redirecting to signup with invitation');
+                    router.push(`/auth?invitationId=${invitationId}`);
+                    return;
+                }
+
+                // User is authenticated - accept the invitation
+                console.log('User authenticated, accepting invitation');
                 const { error } = await authClient.organization.acceptInvitation({
                     invitationId: invitationId
                 });
@@ -34,14 +46,14 @@ export default function AcceptInvitationPage() {
                     router.push('/dashboard');
                 }, 2000);
             } catch (error) {
-                console.error('Failed to accept invitation:', error);
+                console.error('Failed to handle invitation:', error);
                 setStatus('error');
                 setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred');
             }
         }
 
         if (invitationId) {
-            acceptInvitation();
+            handleInvitation();
         }
     }, [invitationId, router]);
 
