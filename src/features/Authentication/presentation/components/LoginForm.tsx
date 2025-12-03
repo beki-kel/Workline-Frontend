@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import { useSearchParams } from "next/navigation"
 
 const loginSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Required'),
@@ -37,6 +38,7 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggle }) => {
     const [isGoogleLoading, setIsGoogleLoading] = React.useState(false)
+    const searchParams = useSearchParams()
 
     return (
         <motion.div
@@ -72,6 +74,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onToggle }) => {
                                             onClick={async () => {
                                                 setIsGoogleLoading(true)
                                                 try {
+                                                    // Store invitation ID before OAuth redirect
+                                                    const invitationId = searchParams.get('invitationId')
+                                                    if (invitationId) {
+                                                        sessionStorage.setItem('pending_invitation_id', invitationId)
+                                                    }
+
                                                     await authClient.signIn.social({
                                                         provider: 'google',
                                                         callbackURL: "https://workline-frontend.vercel.app/dashboard",

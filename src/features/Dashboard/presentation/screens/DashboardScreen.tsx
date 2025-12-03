@@ -33,6 +33,15 @@ export function DashboardScreen() {
         }
     }, [session, router])
 
+    // Check for pending invitation after OAuth redirect
+    useEffect(() => {
+        const pendingInvitation = sessionStorage.getItem('pending_invitation_id')
+        if (pendingInvitation && session?.user) {
+            sessionStorage.removeItem('pending_invitation_id')
+            router.push(`/accept-invitation/${pendingInvitation}`)
+        }
+    }, [session, router])
+
     const handleRowClick = (outline: Outline) => {
         setSelectedOutline(outline)
         setIsEditSidebarOpen(true)
