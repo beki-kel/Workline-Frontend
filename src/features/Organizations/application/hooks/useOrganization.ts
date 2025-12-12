@@ -69,6 +69,15 @@ export const useOrganization = () => {
         }
     })
 
+    // Refetch organizations when session becomes available (e.g., after OAuth)
+    // This solves the race condition where the query is disabled during initial load
+    useEffect(() => {
+        if (session?.user && !organizationsQuery.data && !organizationsQuery.isFetching) {
+            console.log('📡 Session now available, refetching organizations')
+            queryClient.invalidateQueries({ queryKey: ['organizations'] })
+        }
+    }, [session?.user, queryClient])
+
     // Sync Redux with session and fetch role from Better Auth
     useEffect(() => {
         // Set active org ID from session if not in Redux
