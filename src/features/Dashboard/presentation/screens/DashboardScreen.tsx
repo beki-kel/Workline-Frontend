@@ -34,21 +34,12 @@ export function DashboardScreen() {
     }, [session, router])
 
     // Redirect to auth if not logged in and not loading
-    // Redirect to auth if not logged in and not loading
-    // We also check isOrgLoading because useOrganization has a fallback fetch that might succeed
-    // even if useSession fails (Safari/Firefox issue).
     const { isPending: isSessionPending } = authClient.useSession()
-
     useEffect(() => {
-        // Only redirect if:
-        // 1. Session check is done (!isSessionPending) AND no session exists
-        // 2. Organization check is done (!isOrgLoading) AND no organizations found (implied by !session if we rely on it, but useOrganization now decouples them)
-        // Actually, if useOrganization succeeds, we might want to stay.
-        // But here we rely on the fact that if useOrganization is loading, we shouldn't redirect yet.
-        if (!isSessionPending && !isOrgLoading && !session && !activeOrganizationId) {
+        if (!isSessionPending && !session) {
             router.push('/auth')
         }
-    }, [isSessionPending, isOrgLoading, session, activeOrganizationId, router])
+    }, [isSessionPending, session, router])
 
     // Check for pending invitation after OAuth redirect
     useEffect(() => {
@@ -70,9 +61,7 @@ export function DashboardScreen() {
         }
     }
 
-    // Show skeleton if we are loading session OR organizations (fallback)
-    // AND we don't have an active session or organization yet.
-    if ((isSessionPending || isOrgLoading) && !session && !activeOrganizationId) {
+    if (!isSessionPending && !session) {
         return <DashboardSkeleton />
     }
 

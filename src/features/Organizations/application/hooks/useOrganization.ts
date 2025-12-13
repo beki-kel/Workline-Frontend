@@ -26,10 +26,7 @@ export const useOrganization = () => {
     const organizationsQuery = useQuery({
         queryKey: ['organizations'],
         queryFn: () => getOrganizationsUseCase.execute(),
-        // Always try to fetch organizations. If we have a cookie, it will work.
-        // This serves as a fallback if useSession() hook is flaky.
-        enabled: true,
-        retry: 1,
+        enabled: !!session?.user,
     })
 
     const createOrganizationMutation = useMutation({
