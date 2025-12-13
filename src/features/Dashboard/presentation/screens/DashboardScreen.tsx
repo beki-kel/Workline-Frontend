@@ -28,16 +28,10 @@ export function DashboardScreen() {
 
     // Redirect to verify-email if user's email is not verified
     useEffect(() => {
-        // If not loading and no session, redirect to auth
-        if (!isOrgLoading && !session) {
-            router.push('/auth')
-            return
-        }
-
         if (session?.user && !session.user.emailVerified) {
             router.push('/verify-email')
         }
-    }, [session, router, isOrgLoading])
+    }, [session, router])
 
     // Check for pending invitation after OAuth redirect
     useEffect(() => {
