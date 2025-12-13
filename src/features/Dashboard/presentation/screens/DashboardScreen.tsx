@@ -33,6 +33,14 @@ export function DashboardScreen() {
         }
     }, [session, router])
 
+    // Redirect to auth if not logged in and not loading
+    const { isPending: isSessionPending } = authClient.useSession()
+    useEffect(() => {
+        if (!isSessionPending && !session) {
+            router.push('/auth')
+        }
+    }, [isSessionPending, session, router])
+
     // Check for pending invitation after OAuth redirect
     useEffect(() => {
         const pendingInvitation = sessionStorage.getItem('pending_invitation_id')
@@ -51,6 +59,10 @@ export function DashboardScreen() {
         if (activeOrganizationId) {
             await updateOutline(updatedOutline)
         }
+    }
+
+    if (!isSessionPending && !session) {
+        return <DashboardSkeleton />
     }
 
     return (
