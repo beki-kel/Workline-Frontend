@@ -17,7 +17,7 @@ const setActiveOrganizationUseCase = new SetActiveOrganizationUseCase(organizati
 
 export const useOrganization = () => {
     const queryClient = useQueryClient()
-    const { data: session } = authClient.useSession()
+    const { data: session, isPending: isAuthLoading } = authClient.useSession()
 
     const dispatch = useAppDispatch()
     const activeOrganizationId = useAppSelector((state) => state.organizations.activeOrganizationId)
@@ -120,7 +120,7 @@ export const useOrganization = () => {
 
     return {
         organizations: organizationsQuery.data || [],
-        isLoading: organizationsQuery.isLoading || !session,
+        isLoading: organizationsQuery.isLoading || isAuthLoading,
         error: organizationsQuery.error,
         createOrganization: createOrganizationMutation.mutateAsync,
         setActiveOrganization: setActiveOrganizationMutation.mutateAsync,
