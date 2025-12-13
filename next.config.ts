@@ -44,10 +44,7 @@ const nextConfig: NextConfig = {
         source: '/api/invitations/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/invitations/:path*`,
       },
-      {
-        source: '/api/auth/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/auth/:path*`,
-      },
+
       {
         source: '/api/:path*',
         destination: 'https://workline-backend.vercel.app/api/:path*',
