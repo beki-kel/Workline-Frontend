@@ -22,35 +22,35 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/organizations/:organizationId/outlines/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/outlines/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/organizations/:organizationId/outlines/:path*`,
       },
       {
         source: '/api/organizations/:organizationId/outlines',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/outlines`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/organizations/:organizationId/outlines`,
       },
       {
         source: '/api/organizations/:organizationId/members/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/members/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/organizations/:organizationId/members/:path*`,
       },
       {
         source: '/api/organizations/:organizationId/members',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/members`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/organizations/:organizationId/members`,
       },
       {
         source: '/api/organizations/:organizationId/invitations',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/organizations/:organizationId/invitations`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/organizations/:organizationId/invitations`,
       },
       {
         source: '/api/invitations/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/invitations/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/invitations/:path*`,
       },
       {
         source: '/api/auth/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/auth/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://workline-backend.vercel.app'}/api/auth/:path*`,
       },
       {
         source: '/api/:path*',
-        destination: 'http://localhost:3000/api/:path*',
+        destination: 'https://workline-backend.vercel.app/api/:path*',
       },
     ];
   },
